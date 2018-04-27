@@ -4,33 +4,19 @@ import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     TextView tvFactText;
     ConstraintLayout parentLayout;
     Button btnChangeFact;
-
-    String[] facts = {
-            "If you somehow found a way to extract all of the gold from the bubbling core of our lovely little planet, you would be able to cover all of the land in a layer of gold up to your knees."
-            , "The average person spends 6 months of their lifetime waiting on a red light to turn green."
-            , "A U.S. dollar bill can be folded approximately 4,000 times in the same place before it will tear."
-            , "A sneeze travels about 100 miles per hour."
-            , "A broken clock is right two times every day."
-            , "Banging your head against a wall burns 150 calories an hour."
-    };
-    String[] backgroundColors = {
-            "#F44336",
-            "#E91E63",
-            "#9C27B0",
-            "#673AB7",
-            "#009688",
-            "#FFEB3B"
-    };
-
-    int counter = 1;
+    Facts facts;
+    String factType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +26,11 @@ public class MainActivity extends AppCompatActivity {
         parentLayout = findViewById(R.id.parent_layout);
         btnChangeFact = findViewById(R.id.btn_change_fact);
 
-        tvFactText.setText(facts[0]);
-        parentLayout.setBackgroundColor(Color.parseColor(backgroundColors[0]));
+        factType = "random";
+        facts = new Facts();
+
+        tvFactText.setText(facts.getRandomFact(factType));
+        parentLayout.setBackgroundColor(Color.parseColor(facts.getRandomColor()));
 
         btnChangeFact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,17 +49,47 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.fact_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.random_fact:
+                factType = "random";
+                if(getSupportActionBar() != null)
+                    getSupportActionBar().setTitle("Random Facts");
+                break;
+            case R.id.food_fact:
+                factType = "food";
+                if(getSupportActionBar() != null)
+                    getSupportActionBar().setTitle("Food Facts");
+                break;
+            case R.id.game_fact:
+                factType = "game";
+                if(getSupportActionBar() != null)
+                    getSupportActionBar().setTitle("Game Facts");
+                break;
+            default:
+                factType = "random";
+                if(getSupportActionBar() != null)
+                    getSupportActionBar().setTitle("Random Facts");
+                break;
+        }
+        changeFunFactsOnly();
+        return super.onOptionsItemSelected(item);
+    }
+
     public void changeFunFactsAndColor() {
-        if (counter == facts.length)
-            counter = 0;
-        tvFactText.setText(facts[counter]);
-        parentLayout.setBackgroundColor(Color.parseColor(backgroundColors[counter]));
-        counter++;
+        tvFactText.setText(facts.getRandomFact(factType));
+        parentLayout.setBackgroundColor(Color.parseColor(facts.getRandomColor()));
     }
     public void changeFunFactsOnly() {
-        if (counter == facts.length)
-            counter = 0;
-        tvFactText.setText(facts[counter]);
-        counter++;
+        tvFactText.setText(facts.getRandomFact(factType));
     }
 }
